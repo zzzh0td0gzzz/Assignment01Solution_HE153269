@@ -14,9 +14,19 @@ namespace DataAccess.Repositories
             _dbcontext = context;
         }
 
-        public async Task<PagingModel<Order>> GetOrders(DateTime? startDate = null, DateTime? endDate = null, int pageIndex = 1, int pageSize = 10)
+        public async Task<Order?> GetOrder(int id, int? memberId = null)
+        {
+            return await _dbcontext.Orders.Where(o => o.OrderId == id && (memberId == null || o.MemberId == memberId))
+                .Include(o => o.Member).FirstOrDefaultAsync();
+        }
+
+        public async Task<PagingModel<Order>> GetOrders(int? memberId = null, DateTime? startDate = null, DateTime? endDate = null, int pageIndex = 1, int pageSize = 10)
         {
             var query = from order in _dbcontext.Orders select order;
+            if (memberId != null)
+                query = from order in query
+                        where order.MemberId == memberId
+                        select order;
             if (startDate != null)
                 query = from order in query
                         where order.OrderDate >= startDate
@@ -29,8 +39,6 @@ namespace DataAccess.Repositories
                 .Skip(pageSize * (pageIndex - 1))
                 .Take(pageSize)
                 .Include(o => o.Member)
-                .Include(o => o.OrderDetails)
-                .ThenInclude(d => d.Product)
                 .ToListAsync();
             var total = await query.CountAsync();
             return new PagingModel<Order>
@@ -48,8 +56,6 @@ namespace DataAccess.Repositories
             await _dbcontext.SaveChangesAsync();
             return await _dbcontext.Orders.Where(o => o.OrderId == order.OrderId)
                 .Include(o => o.Member)
-                .Include(o => o.OrderDetails)
-                .ThenInclude(d => d.Product)
                 .FirstAsync();
         }
 

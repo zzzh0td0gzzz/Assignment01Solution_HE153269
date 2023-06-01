@@ -61,6 +61,7 @@ namespace eStoreAPI.Controllers
                     Subject = new ClaimsIdentity(new Claim[]
                     {
                         new Claim(ClaimTypes.NameIdentifier, member.MemberId.ToString()),
+                        new Claim(ClaimTypes.Name, member.Email),
                         new Claim(ClaimTypes.Email, member.Email),
                         new Claim(ClaimTypes.Role, isAdmin ? CommonConstants.AdminRole : CommonConstants.MemberRole)
                     }),

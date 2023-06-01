@@ -14,7 +14,13 @@ namespace DataAccess.Repositories
             _dbcontext = context;
         }
 
-        public async Task<PagingModel<Product>> GetProduct(string? name = null, bool? unitPriceSortAsc = null, int pageIndex = 1, int pageSize = 10)
+        public async Task<Product> GetProduct(int id)
+        {
+            return await _dbcontext.Products.Where(p => p.ProductId == id)
+                .Include(p => p.Category).FirstAsync();
+        }
+
+        public async Task<PagingModel<Product>> GetProducts(string? name = null, bool? unitPriceSortAsc = null, int pageIndex = 1, int pageSize = 10)
         {
             var query = from product in _dbcontext.Products select product;
             if (name != null)
@@ -30,7 +36,9 @@ namespace DataAccess.Repositories
                         orderby data.UnitPrice descending
                         select data;
 
-            var items = await query.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
+            var items = await query.Skip((pageIndex - 1) * pageSize).Take(pageSize)
+                .Include(x => x.Category)
+                .ToListAsync();
             var total = await query.CountAsync();
             return new PagingModel<Product>
             {
@@ -45,6 +53,8 @@ namespace DataAccess.Repositories
             product.OrderDetails = null!;
             await _dbcontext.AddAsync(product);
             await _dbcontext.SaveChangesAsync();
+
+            product = await _dbcontext.Products.Where(pro => pro.ProductId == product.ProductId).Include(x => x.Category).FirstAsync();
             return product;
         }
 

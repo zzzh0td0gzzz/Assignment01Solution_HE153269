@@ -14,21 +14,12 @@ namespace DataAccess.Repositories
             _dbcontext = context;
         }
 
-        public async Task<PagingModel<OrderDetail>> GetOrderDetails(int orderId, int pageIndex = 1, int pageSize = 10)
+        public async Task<List<OrderDetail>> GetOrderDetails(int orderId)
         {
             var query = from orderDetail in _dbcontext.OrderDetails
                         where orderDetail.OrderId == orderId
                         select orderDetail;
-            var items = await query.Skip(pageSize * (pageIndex - 1))
-                .Take(pageSize)
-                .Include(o => o.Product)
-                .ToListAsync();
-            var total = await query.CountAsync();
-            return new PagingModel<OrderDetail>
-            {
-                Items = items,
-                TotalPage = (int)Math.Ceiling((double)total / pageSize)
-            };
+            return await query.Include(o => o.Product).ToListAsync();
         }
 
         public async Task<OrderDetail> CreateOrderDetail(OrderDetail detail)

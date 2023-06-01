@@ -1,8 +1,8 @@
 ﻿namespace Common
 {
-    public class CommonConstants
+    public static class CommonConstants
     {
-        public static readonly string MemberRole = "member";
-        public static readonly string AdminRole = "admin";
+        public const string MemberRole = "member";
+        public const string AdminRole = "admin";
     }
 }

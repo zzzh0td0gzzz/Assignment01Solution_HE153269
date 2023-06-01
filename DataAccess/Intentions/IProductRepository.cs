@@ -5,7 +5,9 @@ namespace DataAccess.Intentions
 {
     public interface IProductRepository
     {
-        public Task<PagingModel<Product>> GetProduct(string? name = null, bool? unitPriceSortAsc = null, int pageIndex = 1, int pageSize = 10);
+        public Task<Product> GetProduct(int id);
+
+        public Task<PagingModel<Product>> GetProducts(string? name = null, bool? unitPriceSortAsc = null, int pageIndex = 1, int pageSize = 10);
 
         public Task<Product> CreateProduct(Product product);
 
