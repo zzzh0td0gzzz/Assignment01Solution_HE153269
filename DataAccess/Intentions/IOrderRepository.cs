@@ -1,12 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using BusinessObject.Models;
+using BusinessObject;
 
 namespace DataAccess.Intentions
 {
-    internal interface IOrderRepository
+    public interface IOrderRepository
     {
+        public Task<PagingModel<Order>> GetOrders(DateTime? startDate = null, DateTime? endDate = null, int pageIndex = 1, int pageSize = 10);
+
+        public Task<Order> CreateOrder(Order order);
+
+        public Task UpdateOrder(Order order);
+
+        public Task DeleteOrder(int id);
     }
 }

@@ -1,4 +1,5 @@
-﻿using BusinessObject.Models;
+﻿using BusinessObject;
+using BusinessObject.Models;
 using DataAccess.Intentions;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,22 +14,52 @@ namespace DataAccess.Repositories
             _dbcontext = context;
         }
 
-        public async Task<List<Product>> GetProduct(string? name = null, decimal? unitFrom = null, decimal? unitTo = null, int pageIndex = 1, int pageSize = 10)
+        public async Task<PagingModel<Product>> GetProduct(string? name = null, bool? unitPriceSortAsc = null, int pageIndex = 1, int pageSize = 10)
         {
             var query = from product in _dbcontext.Products select product;
             if (name != null)
                 query = from data in query
-                        where data.ProductName != null && data.ProductName.ToLower().Contains(name)
+                        where data.ProductName != null && data.ProductName.ToLower().Contains(name.ToLower())
                         select data;
-            if (unitFrom != null)
+            if (unitPriceSortAsc == true)
                 query = from data in query
-                        where data.UnitPrice >= unitFrom
+                        orderby data.UnitPrice
                         select data;
-            if (unitTo != null)
+            else if (unitPriceSortAsc == false)
                 query = from data in query
-                        where data.UnitPrice <= unitTo
+                        orderby data.UnitPrice descending
                         select data;
-            return await query.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
+
+            var items = await query.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
+            var total = await query.CountAsync();
+            return new PagingModel<Product>
+            {
+                Items = items,
+                TotalPage = (int)Math.Ceiling((double)total / pageSize)
+            };
+        }
+
+        public async Task<Product> CreateProduct(Product product)
+        {
+            product.Category = null!;
+            product.OrderDetails = null!;
+            await _dbcontext.AddAsync(product);
+            await _dbcontext.SaveChangesAsync();
+            return product;
+        }
+
+        public async Task UpdateProduct(Product product)
+        {
+            product.Category = null!;
+            product.OrderDetails = null!;
+            _dbcontext.Update(product);
+            await _dbcontext.SaveChangesAsync();
+        }
+
+        public async Task DeleteProduct(int id)
+        {
+            await _dbcontext.Products.Where(pro => pro.ProductId == id)
+                .ExecuteDeleteAsync();
         }
     }
 }

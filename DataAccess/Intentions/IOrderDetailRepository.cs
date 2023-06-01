@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using BusinessObject.Models;
+using BusinessObject;
 
 namespace DataAccess.Intentions
 {
     public interface IOrderDetailRepository
     {
+        public Task<PagingModel<OrderDetail>> GetOrderDetails(int orderId, int pageIndex = 1, int pageSize = 10);
+
+        public Task<OrderDetail> CreateOrderDetail(OrderDetail detail);
     }
 }
