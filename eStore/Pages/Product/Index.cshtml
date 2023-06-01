@@ -1,0 +1,42 @@
+﻿@page "/products"
+@model eStore.Pages.Product.IndexModel
+@{
+    Model.ViewData["Title"] = "Product List";
+}
+
+<div class="d-flex justify-content-center">
+    <div class="container">
+        <h1 class="mt-4">Product List</h1>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Product ID</th>
+                    <th>Product Name</th>
+                    <th>Category</th>
+                    <th>Weight</th>
+                    <th>Unit Price</th>
+                    <th>Units In Stock</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var product in Model.Products.Items)
+                {
+                    <tr>
+                        <td>@product.ProductId</td>
+                        <td>@product.ProductName</td>
+                        <td>@product.CategoryName</td>
+                        <td>@product.Weight</td>
+                        <td>@product.UnitPrice</td>
+                        <td>@product.UnitsInStock</td>
+                        <td>
+                            <a href="/product/@product.ProductId" class="btn btn-primary">View</a>
+                            <a href="/product/@product.ProductId" class="btn btn-info">Edit</a>
+                            <a href="/product/@product.ProductId" class="btn btn-danger">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

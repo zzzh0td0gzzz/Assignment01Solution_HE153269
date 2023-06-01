@@ -48,15 +48,29 @@ namespace DataAccess.Repositories
             };
         }
 
-        public async Task<Order> CreateOrder(Order order)
+        public async Task<Order> CreateOrder(Order order, List<OrderDetail> details)
         {
-            order.Member = null!;
-            order.OrderDetails = null!;
-            await _dbcontext.AddAsync(order);
-            await _dbcontext.SaveChangesAsync();
-            return await _dbcontext.Orders.Where(o => o.OrderId == order.OrderId)
-                .Include(o => o.Member)
-                .FirstAsync();
+            using var transaction = await _dbcontext.Database.BeginTransactionAsync();
+            try
+            {
+                order.Member = null!;
+                order.OrderDetails = null!;
+                await _dbcontext.AddAsync(order);
+                await _dbcontext.SaveChangesAsync();
+
+                details.ForEach(de => de.OrderId = order.OrderId);
+                await _dbcontext.OrderDetails.AddRangeAsync(details);
+                await _dbcontext.SaveChangesAsync();
+
+                await transaction.CommitAsync();
+                return await _dbcontext.Orders.Where(o => o.OrderId == order.OrderId)
+                    .Include(o => o.Member).FirstAsync();
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
 
         public async Task UpdateOrder(Order order)

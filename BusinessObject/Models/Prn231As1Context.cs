@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace BusinessObject.Models;
 
@@ -26,7 +27,13 @@ public partial class Prn231As1Context : DbContext
     public virtual DbSet<Product> Products { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlServer("server=LAPTOP-LFBJE1J9; database=PRN231_AS1; user=sa; password=123456;TrustServerCertificate=true;");
+    {
+        if (!optionsBuilder.IsConfigured)
+        {
+            var config = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
+            optionsBuilder.UseSqlServer(config["DBConnectionString"]);
+        }
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

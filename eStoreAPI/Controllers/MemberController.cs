@@ -41,7 +41,7 @@ namespace eStoreAPI.Controllers
                 MyLogger.Info($"{_logPrefix} Start to process login request {model.Email}.");
                 Member? member = null;
                 var isAdmin = false;
-                if (model.Email.ToLower() == _configuration["AdminEmail"]?.ToLower() && model.Password == _configuration["Password"])
+                if (model.Email.ToLower() == _configuration["AdminEmail"]?.ToLower() && model.Password == _configuration["AdminPassword"])
                 {
                     member = new Member
                     {

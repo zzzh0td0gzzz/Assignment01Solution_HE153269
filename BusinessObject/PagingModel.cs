@@ -4,6 +4,6 @@
     {
         public List<T> Items { get; set; } = new List<T>();
 
-        public int TotalPage;
+        public int TotalPage { get; set; }
     }
 }
