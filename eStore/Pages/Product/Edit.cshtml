@@ -1,0 +1,66 @@
+﻿@page "/product/{id:int}/edit"
+@model eStore.Pages.Product.EditModel
+@{
+    ViewData["Title"] = "Update Product";
+}
+
+<div class="container">
+    <h1 class="mt-4">Update Product</h1>
+
+    <form asp-page="Product/Edit" method="post">
+        <input type="hidden" class="form-control" id="productId" name="Id" value="@Model.Id" />
+        <div class="form-group">
+            <label for="categoryId">Category:</label>
+            <select class="form-control" id="categoryId" name="Product.CategoryId">
+                @foreach (var category in Model.Categories)
+                {
+                    @if (category.CategoryId == Model.Product.CategoryId)
+                    {
+                        <option selected="true" value="@category.CategoryId">@category.CategoryName</option>
+                    }
+                    else
+                    {
+                        <option value="@category.CategoryId">@category.CategoryName</option>
+                    }
+                }
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="productName">Product Name:</label>
+            <input type="text" class="form-control" id="productName" name="Product.ProductName" value="@Model.Product.ProductName" />
+        </div>
+
+        <div class="form-group">
+            <label for="weight">Weight:</label>
+            <input type="number" class="form-control" id="weight" name="Product.Weight" value="@Model.Product.Weight" />
+        </div>
+
+        <div class="form-group">
+            <label for="unitPrice">Unit Price:</label>
+            <input type="number" class="form-control" id="unitPrice" name="Product.UnitPrice" value="@Model.Product.UnitPrice" />
+        </div>
+
+        <div class="form-group">
+            <label for="unitsInStock">Units In Stock:</label>
+            <input type="number" class="form-control" id="unitsInStock" name="Product.UnitsInStock" value="@Model.Product.UnitsInStock" />
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-3">Update</button>
+        @if (Model.Message != null)
+        {
+            @if (Model.Error)
+            {
+                <div class="alert alert-danger mt-3" role="alert">
+                    @Model.Message
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-success mt-3" role="alert">
+                    @Model.Message
+                </div>
+            }
+        }
+    </form>
+</div>

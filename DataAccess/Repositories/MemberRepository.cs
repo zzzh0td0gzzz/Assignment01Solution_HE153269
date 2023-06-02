@@ -15,17 +15,17 @@ namespace DataAccess.Repositories
 
         public async Task<Member?> GetMember(string email, string password)
         {
-            return await _dbcontext.Members.FirstOrDefaultAsync(mem => mem.Email.ToLower() == email.ToLower() && mem.Password == password);
+            return await _dbcontext.Members.AsNoTracking().FirstOrDefaultAsync(mem => mem.Email.ToLower() == email.ToLower() && mem.Password == password);
         }
 
         public async Task<Member?> GetMember(string email)
         {
-            return await _dbcontext.Members.FirstOrDefaultAsync(mem => mem.Email.ToLower() == email.ToLower());
+            return await _dbcontext.Members.AsNoTracking().FirstOrDefaultAsync(mem => mem.Email.ToLower() == email.ToLower());
         }
 
         public async Task<Member?> GetMember(int id)
         {
-            return await _dbcontext.Members.FirstOrDefaultAsync(mem => mem.MemberId == id);
+            return await _dbcontext.Members.AsNoTracking().FirstOrDefaultAsync(mem => mem.MemberId == id);
         }
     }
 }

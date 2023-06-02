@@ -87,7 +87,7 @@ namespace eStoreAPI.Controllers
 
         [Authorize(Roles = CommonConstants.AdminRole)]
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateProduct([FromRoute] int id, [FromBody] ProductRequestModel model)
+        public async Task<ActionResult> UpdateProduct([FromRoute] int id, [FromBody] ProductUpdateRequestModel model)
         {
             try
             {

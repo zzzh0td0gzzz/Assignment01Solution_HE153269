@@ -16,7 +16,7 @@ namespace DataAccess.Repositories
 
         public async Task<Product> GetProduct(int id)
         {
-            return await _dbcontext.Products.Where(p => p.ProductId == id)
+            return await _dbcontext.Products.AsNoTracking().Where(p => p.ProductId == id)
                 .Include(p => p.Category).FirstAsync();
         }
 
@@ -36,10 +36,11 @@ namespace DataAccess.Repositories
                         orderby data.UnitPrice descending
                         select data;
 
-            var items = await query.Skip((pageIndex - 1) * pageSize).Take(pageSize)
+            var items = await query.AsNoTracking()
+                .Skip((pageIndex - 1) * pageSize).Take(pageSize)
                 .Include(x => x.Category)
                 .ToListAsync();
-            var total = await query.CountAsync();
+            var total = await query.AsNoTracking().CountAsync();
             return new PagingModel<Product>
             {
                 Items = items,
@@ -54,7 +55,9 @@ namespace DataAccess.Repositories
             await _dbcontext.AddAsync(product);
             await _dbcontext.SaveChangesAsync();
 
-            product = await _dbcontext.Products.Where(pro => pro.ProductId == product.ProductId).Include(x => x.Category).FirstAsync();
+            product = await _dbcontext.Products.AsNoTracking()
+                .Where(pro => pro.ProductId == product.ProductId).Include(x => x.Category)
+                .FirstAsync();
             return product;
         }
 
@@ -62,7 +65,7 @@ namespace DataAccess.Repositories
         {
             product.Category = null!;
             product.OrderDetails = null!;
-            _dbcontext.Update(product);
+            _dbcontext.Entry(product).State = EntityState.Modified;
             await _dbcontext.SaveChangesAsync();
         }
 

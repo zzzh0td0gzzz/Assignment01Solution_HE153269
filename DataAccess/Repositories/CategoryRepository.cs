@@ -15,7 +15,7 @@ namespace DataAccess.Repositories
 
         public async Task<List<Category>> GetCategories()
         {
-            return await _dbcontext.Categories.ToListAsync();
+            return await _dbcontext.Categories.AsNoTracking().ToListAsync();
         }
 
         public async Task<Category> CreateCategory(Category category)
@@ -23,6 +23,7 @@ namespace DataAccess.Repositories
             category.Products = null!;
             await _dbcontext.AddAsync(category);
             await _dbcontext.SaveChangesAsync();
+            _dbcontext.Entry(category).State = EntityState.Detached;
             return category;
         }
 

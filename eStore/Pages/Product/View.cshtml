@@ -1,4 +1,28 @@
 ﻿@page "/product/{id:int}"
+@using Common;
 @model eStore.Pages.Product.ViewModel
 @{
+    ViewData["Title"] = "Product Details";
 }
+
+<div class="container">
+    <h1 class="mt-4">Product Details</h1>
+
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Product ID: @Model.Product.ProductId</h5>
+            <p class="card-text">Category ID: @Model.Product.CategoryId</p>
+            <p class="card-text">Category Name: @Model.Product.CategoryName</p>
+            <p class="card-text">Product Name: @Model.Product.ProductName</p>
+            <p class="card-text">Weight: @Model.Product.Weight</p>
+            <p class="card-text">Unit Price: @Model.Product.UnitPrice.ToString("0.0")</p>
+            <p class="card-text">Units In Stock: @Model.Product.UnitsInStock</p>
+
+            @if (User.IsInRole(CommonConstants.AdminRole))
+            {
+                <a href="/product/@Model.Product.ProductId/edit" class="btn btn-primary">Update</a>
+                <a href="/product/@Model.Product.ProductId/delete" class="btn btn-danger">Delete</a>
+            }
+        </div>
+    </div>
+</div>

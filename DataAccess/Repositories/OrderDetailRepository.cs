@@ -19,7 +19,7 @@ namespace DataAccess.Repositories
             var query = from orderDetail in _dbcontext.OrderDetails
                         where orderDetail.OrderId == orderId
                         select orderDetail;
-            return await query.Include(o => o.Product).ToListAsync();
+            return await query.AsNoTracking().Include(o => o.Product).ToListAsync();
         }
 
         public async Task<OrderDetail> CreateOrderDetail(OrderDetail detail)
@@ -28,7 +28,10 @@ namespace DataAccess.Repositories
             detail.Product = null!;
             await _dbcontext.OrderDetails.AddAsync(detail);
             await _dbcontext.SaveChangesAsync();
-            return detail;
+            return await _dbcontext.OrderDetails.AsNoTracking()
+                .Where(d => d.OrderId == detail.OrderId && d.ProductId == detail.ProductId)
+                .Include(o => o.Product)
+                .FirstAsync();
         }
     }
 }

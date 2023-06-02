@@ -1,3 +1,5 @@
+using System.Reflection;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSession();
@@ -6,6 +8,7 @@ builder.Services.AddAuthorization();
 builder.Services.AddAuthentication("CookieAuthentication")
     .AddCookie("CookieAuthentication", options => options.LoginPath = "/auth/login");
 builder.Services.AddHttpClient();
+builder.Services.AddAutoMapper(Assembly.Load("Mapper"));
 
 var app = builder.Build();
 if (!app.Environment.IsDevelopment())

@@ -13,11 +13,17 @@ namespace eStore.Pages.Product
     {
         public PagingModel<ProductResponseModel> Products { get; set; } = null!;
 
+        [BindProperty(SupportsGet = true)]
         public string? Name { get; set; } = null;
         
+        [BindProperty(SupportsGet = true)]
         public bool? UnitPriceSortAsc { get; set; } = null!;
 
-        public int PageIndex = 1;
+        [BindProperty(SupportsGet = true)]
+        public int PageIndex { get; set; } = 1;
+
+        [BindProperty(SupportsGet = true)]
+        public int PageSize { get; set; } = 10;
 
         private readonly HttpClient _client;
 
@@ -33,7 +39,7 @@ namespace eStore.Pages.Product
             {
                 Name = Name,
                 PageIndex = PageIndex,
-                PageSize = 10,
+                PageSize = PageSize,
                 UnitPriceSortAsc = UnitPriceSortAsc
             };
             var products = await apiClient.Post<PagingModel<ProductResponseModel>>("/api/product/all", data);

@@ -1,0 +1,63 @@
+﻿@page
+@model eStore.Pages.Order.IndexModel
+@{
+    Model.ViewData["Title"] = "Order List";
+}
+
+<form asp-page="/Order/Index" method="get">
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Start Date</label>
+        <div class="col-sm-4">
+            <input type="date" class="form-control" asp-for="StartDate" />
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">End Date</label>
+        <div class="col-sm-4">
+            <input type="date" class="form-control" asp-for="EndDate" />
+        </div>
+    </div>
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Filter</button>
+    </div>
+</form>
+
+<h1>Order List</h1>
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Order ID</th>
+            <th>Order Date</th>
+            <th>Required Date</th>
+            <th>Shipped Date</th>
+            <th>Freight</th>
+            <th>Member Email</th>
+            <th>Company Name</th>
+            <th>City</th>
+            <th>Country</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in Model.Orders.Items)
+        {
+            <tr>
+                <td>@order.OrderId</td>
+                <td>@order.OrderDate.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                <td>@(order.RequireDate?.ToString("yyyy-MM-dd HH:mm:ss") ?? "-")</td>
+                <td>@(order.ShippedDate?.ToString("yyyy-MM-dd HH:mm:ss") ?? "-")</td>
+                <td>@order.Freight.ToString("0.0")</td>
+                <td>@order.Member.Email</td>
+                <td>@order.Member.CompanyName</td>
+                <td>@order.Member.City</td>
+                <td>@order.Member.Country</td>
+                <td><a class="btn btn-primary" href="/order/@order.OrderId">View</a></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div>
+    <a class="btn btn-primary @(Model.Orders.TotalPage <= Model.PageSize ? "disabled" : "")" href="/orders?pageIndex=@(Model.PageIndex - 1)&pageSize=@Model.PageSize&startDate=@Model.StartDate&endDate=@Model.EndDate">Previous</a>
+    <a class="btn btn-primary @(Model.Orders.TotalPage < Model.PageSize ? "disabled" : "")" href="/orders?pageIndex=@(Model.PageIndex + 1)&pageSize=@Model.PageSize&startDate=@Model.StartDate&endDate=@Model.EndDate">Next</a>
+</div>

@@ -1,4 +1,5 @@
-﻿@page "/products"
+﻿@page "/product"
+@using Common;
 @model eStore.Pages.Product.IndexModel
 @{
     Model.ViewData["Title"] = "Product List";
@@ -7,6 +8,46 @@
 <div class="d-flex justify-content-center">
     <div class="container">
         <h1 class="mt-4">Product List</h1>
+
+        <div class="container mb-3">
+            <form method="get">
+                <div class="form-row">
+                    <div class="col-md-4 mb-3">
+                        <label for="nameSearch">Search by Name:</label>
+                        <input type="text" class="form-control" id="nameSearch" name="Name" value="@Model.Name" />
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label for="sortSelect">Sort:</label>
+                        <select class="form-control" id="sortSelect" name="UnitPriceSortAsc">
+                            @if (Model.UnitPriceSortAsc == true)
+                            {
+                                <option value="">None</option>
+                                <option value="true" selected>Price Ascending</option>
+                                <option value="false">Price Descending</option>
+                            }
+                            else if (Model.UnitPriceSortAsc == false)
+                            {
+                                <option value="">None</option>
+                                <option value="true">Price Ascending</option>
+                                <option value="false" selected>Price Descending</option>
+                            }
+                            else
+                            {
+                                <option value="">None</option>
+                                <option value="true">Price Ascending</option>
+                                <option value="false">Price Descending</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary">Search</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -27,16 +68,34 @@
                         <td>@product.ProductName</td>
                         <td>@product.CategoryName</td>
                         <td>@product.Weight</td>
-                        <td>@product.UnitPrice</td>
+                        <td>@product.UnitPrice.ToString("0.0")</td>
                         <td>@product.UnitsInStock</td>
                         <td>
                             <a href="/product/@product.ProductId" class="btn btn-primary">View</a>
-                            <a href="/product/@product.ProductId" class="btn btn-info">Edit</a>
-                            <a href="/product/@product.ProductId" class="btn btn-danger">Delete</a>
+                            @if (User.IsInRole(CommonConstants.AdminRole))
+                            {
+                                <a href="/product/@product.ProductId/edit" class="btn btn-info">Edit</a>
+                                <a href="/product/@product.ProductId/delete" class="btn btn-danger">Delete</a>
+                            }
+                            else if (User.IsInRole(CommonConstants.MemberRole))
+                            {
+                                <a href="/cart/add/@product.ProductId" class="btn btn-success">Add To Cart</a>
+                            }
                         </td>
                     </tr>
                 }
             </tbody>
         </table>
+
+        <div class="row mt-3">
+            <div class="col-md-6">
+                <a class="btn btn-primary @(Model.PageIndex <= 1 ? "disabled" : "")" href="?PageIndex=@(Model.PageIndex - 1)&PageSize=@Model.PageSize&Name=@Model.Name&UnitPriceSortAsc=@Model.UnitPriceSortAsc">Previous</a>
+            </div>
+
+            <div class="col-md-6 text-right">
+                <a class="btn btn-primary @(Model.PageIndex >= Model.Products.TotalPage ? "disabled" : "")" href="?PageIndex=@(Model.PageIndex + 1)&PageSize=@Model.PageSize&Name=@Model.Name&UnitPriceSortAsc=@Model.UnitPriceSortAsc">Next</a>
+            </div>
+        </div>
+
     </div>
 </div>

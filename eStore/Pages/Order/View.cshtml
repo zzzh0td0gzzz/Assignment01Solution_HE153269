@@ -1,0 +1,51 @@
+﻿@page "/order/{id:int}"
+@model eStore.Pages.Order.ViewModel
+@{
+    Model.ViewData["Title"] = "Order Information";
+}
+
+<h1>Order Information</h1>
+
+<p><strong>Order ID:</strong> @Model.OrderInfo.OrderId</p>
+<p><strong>Order Date:</strong> @Model.OrderInfo.OrderDate.ToString("yyyy-MM-dd HH:mm:ss")</p>
+<p><strong>Required Date:</strong> @(Model.OrderInfo.RequireDate?.ToString("yyyy-MM-dd HH:mm:ss") ?? "-")</p>
+<p><strong>Shipped Date:</strong> @(Model.OrderInfo.ShippedDate?.ToString("yyyy-MM-dd HH:mm:ss") ?? "-")</p>
+<p><strong>Freight:</strong> @Model.OrderInfo.Freight.ToString("0.0")</p>
+
+<h2>Member Information</h2>
+
+<p><strong>Email:</strong> @Model.OrderInfo.Member.Email</p>
+<p><strong>Company Name:</strong> @Model.OrderInfo.Member.CompanyName</p>
+<p><strong>City:</strong> @Model.OrderInfo.Member.City</p>
+<p><strong>Country:</strong> @Model.OrderInfo.Member.Country</p>
+
+<h2>Order Details</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Product ID</th>
+            <th>Product Name</th>
+            <th>Unit Price</th>
+            <th>Quantity</th>
+            <th>Discount</th>
+            <th>Subtotal</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var detail in Model.OrderInfo.Details)
+        {
+            <tr>
+                <td>@detail.ProductId</td>
+                <td>@detail.ProductName</td>
+                <td>@detail.UnitPrice.ToString("0.0")</td>
+                <td>@detail.Quantity</td>
+                <td>@(detail.Discount.HasValue ? detail.Discount.Value.ToString("0.0") + "%" : "-")</td>
+                @{
+                    decimal subtotal = detail.UnitPrice * detail.Quantity * (1 - (decimal)(detail.Discount ?? 0) / 100m);
+                }
+                <td>@subtotal.ToString("0.0")</td>
+            </tr>
+        }
+    </tbody>
+</table>

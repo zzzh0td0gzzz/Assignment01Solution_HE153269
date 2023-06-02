@@ -16,7 +16,8 @@ namespace DataAccess.Repositories
 
         public async Task<Order?> GetOrder(int id, int? memberId = null)
         {
-            return await _dbcontext.Orders.Where(o => o.OrderId == id && (memberId == null || o.MemberId == memberId))
+            return await _dbcontext.Orders.AsNoTracking()
+                .Where(o => o.OrderId == id && (memberId == null || o.MemberId == memberId))
                 .Include(o => o.Member).FirstOrDefaultAsync();
         }
 
@@ -35,7 +36,8 @@ namespace DataAccess.Repositories
                 query = from order in query
                         where order.OrderDate <= endDate
                         select order;
-            var items = await query.OrderBy(x => x.OrderDate)
+            var items = await query.AsNoTracking()
+                .OrderBy(x => x.OrderDate)
                 .Skip(pageSize * (pageIndex - 1))
                 .Take(pageSize)
                 .Include(o => o.Member)
@@ -63,7 +65,8 @@ namespace DataAccess.Repositories
                 await _dbcontext.SaveChangesAsync();
 
                 await transaction.CommitAsync();
-                return await _dbcontext.Orders.Where(o => o.OrderId == order.OrderId)
+                return await _dbcontext.Orders.AsNoTracking()
+                    .Where(o => o.OrderId == order.OrderId)
                     .Include(o => o.Member).FirstAsync();
             }
             catch

@@ -1,4 +1,4 @@
-using BusinessObject.API.Product.Response;
+using Common;
 using eStore.Serivces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -6,17 +6,15 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace eStore.Pages.Product
 {
-    [Authorize]
-    public class ViewModel : PageModel
+    [Authorize(Roles = CommonConstants.AdminRole)]
+    public class DeleteModel : PageModel
     {
         [BindProperty(SupportsGet = true)]
         public int Id { get; set; }
 
-        public ProductResponseModel Product { get; set; } = null!;
-
         private readonly HttpClient _client;
 
-        public ViewModel(HttpClient client)
+        public DeleteModel(HttpClient client)
         {
             _client = client;
         }
@@ -24,10 +22,9 @@ namespace eStore.Pages.Product
         public async Task<IActionResult> OnGet()
         {
             var apiClient = new APIClientService(HttpContext, _client);
-            var product = await apiClient.Get<ProductResponseModel>($"/api/product/{Id}");
-            if (product == null) return RedirectToPage("/Error");
-            Product = product;
-            return Page();
+            var content = await apiClient.Delete($"/api/product/{Id}");
+            if (content == null) return RedirectToPage("/Error");
+            return RedirectToPage("/Product/Index");
         }
     }
 }

@@ -146,7 +146,7 @@ namespace eStore.Serivces
             }
         }
 
-        private StringContent? GetBody(object? data)
+        private static StringContent? GetBody(object? data)
         {
             if (data == null) return null;
             var body = JsonConvert.SerializeObject(data);
